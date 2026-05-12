@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --primary-color: #4a6bff;
+      --secondary-color: #6c757d;
+      --success-color: #28a745;
+      --info-color: #17a2b8;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+      --dark-color: #343a40;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+      margin: 0;
+      color: #fff;
+    }
+
+    .dashboard {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 20px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+      padding: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+      transition: all 0.3s ease;
+    }
+
+    .dashboard:hover {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    h2 {
+      font-weight: 600;
+      margin-bottom: 40px;
+      text-align: center;
+      color: white;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.8), rgba(255,255,255,0));
+      border-radius: 4px;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .module-btn {
+      padding: 20px 15px;
+      border-radius: 12px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: none;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 120px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .module-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: translateX(-100%);
+      transition: 0.6s;
+    }
+
+    .module-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    .module-btn:hover::before {
+      transform: translateX(100%);
+    }
+
+    .module-btn i {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .btn-primary { background-color: var(--primary-color); }
+    .btn-success { background-color: var(--success-color); }
+    .btn-secondary { background-color: var(--secondary-color); }
+    .btn-warning { background-color: var(--warning-color); color: #212529; }
+    .btn-info { background-color: var(--info-color); }
+    .btn-dark { background-color: var(--dark-color); }
+    .btn-outline-primary { 
+      background-color: transparent;
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+    .btn-outline-success { 
+      background-color: transparent;
+      border: 2px solid var(--success-color);
+      color: var(--success-color);
+    }
+    .btn-outline-warning { 
+      background-color: transparent;
+      border: 2px solid var(--warning-color);
+      color: var(--warning-color);
+    }
+    .btn-outline-info { 
+      background-color: transparent;
+      border: 2px solid var(--info-color);
+      color: var(--info-color);
+    }
+    .btn-outline-danger { 
+      background-color: transparent;
+      border: 2px solid var(--danger-color);
+      color: var(--danger-color);
+    }
+    .btn-outline-secondary { 
+      background-color: transparent;
+      border: 2px solid var(--secondary-color);
+      color: var(--secondary-color);
+    }
+
+    .logout-btn {
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .logout-btn .btn {
+      padding: 10px 25px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      background-color: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+    }
+
+    .logout-btn .btn:hover {
+      background-color: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Floating animation */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .dashboard {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .dashboard {
+        padding: 30px 20px;
+      }
+      .module-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container dashboard">
+    <h2><i class="fas fa-user-shield me-2"></i>Admin Dashboard</h2>
+
+    <div class="module-grid">
+      <button class="module-btn btn btn-primary" onclick="goToAdd()">
+        <i class="fas fa-user-plus"></i>
+        Add Student
+      </button>
+      <button class="module-btn btn btn-success" onclick="goToView()">
+        <i class="fas fa-users"></i>
+        View Students
+      </button>
+      <button class="module-btn btn btn-secondary" onclick="goToUpload()">
+        <i class="fas fa-file-upload"></i>
+        Upload Documents
+      </button>
+      <button class="module-btn btn btn-warning" onclick="goToQueries()">
+        <i class="fas fa-question-circle"></i>
+        Student Queries
+      </button>
+      <button class="module-btn btn btn-info" onclick="goToNotify()">
+        <i class="fas fa-bullhorn"></i>
+        Post Notifications
+      </button>
+      <button class="module-btn btn btn-dark" onclick="goToExam()">
+        <i class="fas fa-calendar-alt"></i>
+        Exam Schedule
+      </button>
+      <button class="module-btn btn btn-outline-primary" onclick="goToTimetable()">
+        <i class="fas fa-calendar-day"></i>
+        Class Timetable
+      </button>
+      <button class="module-btn btn btn-outline-success" onclick="goToFees()">
+        <i class="fas fa-money-bill-wave"></i>
+        Manage Fees
+      </button>
+      <button class="module-btn btn btn-outline-warning" onclick="goToAssignments()">
+        <i class="fas fa-tasks"></i>
+        Assignment Review
+      </button>
+      <button class="module-btn btn btn-outline-info" onclick="goToAcademics()">
+        <i class="fas fa-book-open"></i>
+        Add Academics
+      </button>
+      <button class="module-btn btn btn-outline-danger" onclick="goToAnalytics()">
+        <i class="fas fa-chart-line"></i>
+        Dashboard Analytics
+      </button>
+      <button class="module-btn btn btn-outline-secondary" onclick="goToExport()">
+        <i class="fas fa-file-export"></i>
+        Export Data
+      </button>
+    </div>
+
+    <div class="logout-btn">
+      <button class="btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt me-2"></i>Logout
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const dbCheck = indexedDB.open("StudentDB", 11);
+    dbCheck.onupgradeneeded = (event) => {
+      const db = event.target.result;
+
+      if (!db.objectStoreNames.contains("students")) {
+        db.createObjectStore("students", { keyPath: "email" });
+      }
+      if (!db.objectStoreNames.contains("documents")) {
+        db.createObjectStore("documents", { keyPath: "id" });
+      }
+      if (!db.objectStoreNames.contains("notifications")) {
+        db.createObjectStore("notifications", { keyPath: "id", autoIncrement: true });
+      }
+      if (!db.objectStoreNames.contains("exam_schedule")) {
+        db.createObjectStore("exam_schedule", { keyPath: "id", autoIncrement: true });
+      }
+      if (!db.objectStoreNames.contains("fees")) {
+        db.createObjectStore("fees", { keyPath: "id", autoIncrement: true });
+      }
+      if (!db.objectStoreNames.contains("assignments")) {
+        db.createObjectStore("assignments", { keyPath: "id", autoIncrement: true });
+      }
+      if (!db.objectStoreNames.contains("academics")) {
+        db.createObjectStore("academics", { keyPath: "id", autoIncrement: true });
+      }
+    };
+
+    function goToAdd() {
+      window.location.href = "register.html";
+    }
+
+    function goToView() {
+      window.location.href = "view_students.html";
+    }
+
+    function goToUpload() {
+      window.location.href = "upload_documents.html";
+    }
+
+    function goToQueries() {
+      window.location.href = "student_queries.html";
+    }
+
+    function goToNotify() {
+      window.location.href = "post_notifications.html";
+    }
+
+    function goToExam() {
+      window.location.href = "exam_schedule.html";
+    }
+
+    function goToTimetable() {
+      window.location.href = "class_timetable.html";
+    }
+
+    function goToFees() {
+      window.location.href = "manage_fees.html";
+    }
+
+    function goToAssignments() {
+      window.location.href = "assignment_review.html";
+    }
+
+    function goToAcademics() {
+      window.location.href = "add_academics.html";
+    }
+
+    function goToAnalytics() {
+      window.location.href = "dashboard_analytics.html";
+    }
+
+    function goToExport() {
+      window.location.href = "export_data.html";
+    }
+
+    function logout() {
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>

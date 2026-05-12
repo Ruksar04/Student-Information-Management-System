@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Class Timetable</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --light-bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-dark: #2b2d42;
+      --text-light: #6c757d;
+      --border-radius: 12px;
+      --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light-bg);
+      color: var(--text-dark);
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+    
+    .container {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      max-width: 1200px;
+    }
+    
+    h2 {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 30px;
+      color: var(--primary-color);
+      position: relative;
+    }
+    
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      border-radius: 2px;
+    }
+    
+    .table {
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+    }
+    
+    .table thead th {
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      color: white;
+      font-weight: 500;
+      border: none;
+      padding: 15px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    
+    .table tbody td {
+      border: 1px solid #e9ecef;
+      padding: 12px 15px;
+      vertical-align: middle;
+    }
+    
+    .table tbody tr:nth-child(even) {
+      background-color: rgba(67, 97, 238, 0.03);
+    }
+    
+    .table tbody tr:hover {
+      background-color: rgba(67, 97, 238, 0.1);
+      transform: translateX(2px);
+      transition: all 0.2s ease;
+    }
+    
+    .btn {
+      border-radius: var(--border-radius);
+      padding: 10px 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn-secondary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(63, 55, 201, 0.2);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-light);
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      color: var(--primary-color);
+      opacity: 0.5;
+      margin-bottom: 15px;
+    }
+    
+    .day-header {
+      background-color: rgba(67, 97, 238, 0.1) !important;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 10px;
+      }
+      
+      .container {
+        padding: 20px;
+      }
+      
+      .table thead {
+        display: none;
+      }
+      
+      .table, .table tbody, .table tr, .table td {
+        display: block;
+        width: 100%;
+      }
+      
+      .table tr {
+        margin-bottom: 15px;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      
+      .table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        border: none;
+        border-bottom: 1px solid #e9ecef;
+      }
+      
+      .table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: calc(50% - 15px);
+        padding-right: 15px;
+        font-weight: 600;
+        text-align: left;
+        color: var(--primary-color);
+      }
+      
+      .day-header td::before {
+        font-weight: 700;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2><i class="far fa-calendar-alt me-2"></i>Class Timetable</h2>
+
+    <div id="timetableContainer" class="table-responsive">
+      <!-- Timetable will be loaded here -->
+    </div>
+
+    <button class="btn btn-secondary mt-4" onclick="goBack()">
+      <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+    </button>
+  </div>
+
+  <script>
+    let db;
+
+    const request = indexedDB.open("StudentDB", 11);
+
+    request.onsuccess = (event) => {
+      db = event.target.result;
+      loadTimetable();
+    };
+
+    request.onerror = () => {
+      const container = document.getElementById("timetableContainer");
+      container.innerHTML = `
+        <div class="alert alert-danger">
+          <i class="fas fa-exclamation-circle me-2"></i>Failed to open database.
+        </div>
+      `;
+    };
+
+    function loadTimetable() {
+      const tx = db.transaction("class_timetable", "readonly");
+      const store = tx.objectStore("class_timetable");
+      const req = store.getAll();
+
+      req.onsuccess = () => {
+        const timetable = req.result;
+        const container = document.getElementById("timetableContainer");
+
+        if (!timetable || timetable.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <i class="far fa-calendar-times"></i>
+              <h4>No timetable available</h4>
+              <p>Your class schedule will appear here once available</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Group by day
+        const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        const groupedByDay = {};
+        
+        days.forEach(day => {
+          groupedByDay[day] = timetable.filter(item => item.day === day);
+        });
+
+        let html = `<table class="table">
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Time</th>
+              <th>Subject</th>
+              <th>Room</th>
+              <th>Lecturer</th>
+            </tr>
+          </thead>
+          <tbody>`;
+
+        days.forEach(day => {
+          const dayClasses = groupedByDay[day];
+          
+          if (dayClasses.length > 0) {
+            // Add day header row
+            html += `
+              <tr class="day-header">
+                <td colspan="5">${day}</td>
+              </tr>
+            `;
+            
+            // Add each class for the day
+            dayClasses.forEach(cls => {
+              html += `
+                <tr>
+                  <td data-label="Day">${cls.day || ''}</td>
+                  <td data-label="Time">${cls.time || ''}</td>
+                  <td data-label="Subject">${cls.subject || ''}</td>
+                  <td data-label="Room">${cls.room || 'TBA'}</td>
+                  <td data-label="Lecturer">${cls.lecturer || 'TBA'}</td>
+                </tr>
+              `;
+            });
+          }
+        });
+
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+      };
+
+      req.onerror = () => {
+        const container = document.getElementById("timetableContainer");
+        container.innerHTML = `
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle me-2"></i>Failed to load timetable.
+          </div>
+        `;
+      };
+    }
+
+    function goBack() {
+      window.location.href = "student_dashboard.html";
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Assignment Review</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --primary-color: #4a6bff;
+      --danger-color: #dc3545;
+      --text-light: rgba(255,255,255,0.9);
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--primary-gradient);
+      min-height: 100vh;
+      padding: 40px 20px;
+      margin: 0;
+      color: var(--text-light);
+    }
+    
+    .container {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--glass-border);
+      max-width: 900px;
+    }
+    
+    h2 {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 30px;
+      position: relative;
+      padding-bottom: 15px;
+    }
+    
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.8), rgba(255,255,255,0));
+      border-radius: 3px;
+    }
+    
+    .form-control, .form-select {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      padding: 12px 15px;
+      transition: all 0.3s ease;
+      color: #333;
+    }
+    
+    .form-control:focus {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 0 0.25rem rgba(74, 107, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+    
+    textarea.form-control {
+      min-height: 120px;
+    }
+    
+    label {
+      font-weight: 500;
+      margin-bottom: 8px;
+      display: block;
+    }
+    
+    .btn {
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+    }
+    
+    .btn-primary:hover {
+      background-color: #3a5bef;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .btn-secondary {
+      background-color: rgba(255,255,255,0.15);
+      color: var(--text-light);
+    }
+    
+    .btn-secondary:hover {
+      background-color: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
+    }
+    
+    .assignment-item {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--glass-border);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .assignment-item:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    .assignment-item strong {
+      font-size: 1.1rem;
+    }
+    
+    .assignment-item .text-muted {
+      color: rgba(255,255,255,0.7) !important;
+    }
+    
+    .assignment-item small {
+      display: block;
+      margin: 5px 0;
+    }
+    
+    .assignment-item p {
+      margin: 10px 0 15px;
+      line-height: 1.6;
+    }
+    
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.875rem;
+      border-radius: 6px;
+    }
+    
+    .btn-danger {
+      background-color: var(--danger-color);
+    }
+    
+    .btn-danger:hover {
+      background-color: #c82333;
+      transform: translateY(-2px);
+    }
+    
+    hr {
+      margin: 30px 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    h5 {
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: rgba(255,255,255,0.7);
+    }
+    
+    .empty-state i {
+      font-size: 2rem;
+      margin-bottom: 15px;
+      color: rgba(255,255,255,0.3);
+    }
+    
+    .d-flex.gap-3 {
+      gap: 1rem !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2><i class="fas fa-tasks me-2"></i>Assignment Review</h2>
+
+    <form id="assignmentForm">
+      <div class="mb-3">
+        <label>Title</label>
+        <input type="text" class="form-control" id="title" required placeholder="Enter assignment title" />
+      </div>
+
+      <div class="mb-3">
+        <label>Subject</label>
+        <input type="text" class="form-control" id="subject" required placeholder="Enter subject name" />
+      </div>
+
+      <div class="mb-3">
+        <label>Deadline</label>
+        <input type="date" class="form-control" id="deadline" required />
+      </div>
+
+      <div class="mb-3">
+        <label>Description</label>
+        <textarea class="form-control" id="description" rows="4" required placeholder="Enter assignment details and requirements..."></textarea>
+      </div>
+
+      <div class="d-flex gap-3">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-paper-plane me-1"></i> Post Assignment
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="goBack()">
+          <i class="fas fa-arrow-left me-1"></i> Dashboard
+        </button>
+      </div>
+    </form>
+
+    <hr />
+
+    <h5><i class="fas fa-clipboard-list"></i> Posted Assignments</h5>
+    <div id="assignmentList">
+      <!-- Assignments will be loaded here -->
+    </div>
+  </div>
+
+  <script>
+    let db;
+    const DB_NAME = "StudentDB";
+    const DB_VERSION = 11;
+    const STORE_NAME = "assignments";
+
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+    request.onerror = () => showAlert("Failed to open database", "danger");
+
+    request.onupgradeneeded = (e) => {
+      db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: "id", autoIncrement: true });
+      }
+    };
+
+    request.onsuccess = (e) => {
+      db = e.target.result;
+      loadAssignments();
+    };
+
+    document.getElementById("assignmentForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const title = document.getElementById("title").value.trim();
+      const subject = document.getElementById("subject").value.trim();
+      const deadline = document.getElementById("deadline").value;
+      const description = document.getElementById("description").value.trim();
+
+      if (!title || !subject || !deadline || !description) {
+        showAlert("Please fill all fields", "warning");
+        return;
+      }
+
+      const tx = db.transaction(STORE_NAME, "readwrite");
+      const store = tx.objectStore(STORE_NAME);
+
+      const assignment = { 
+        title, 
+        subject, 
+        deadline: formatDate(deadline), 
+        description,
+        posted: new Date().toISOString()
+      };
+
+      const req = store.add(assignment);
+
+      req.onsuccess = () => {
+        showAlert("Assignment posted successfully!", "success");
+        this.reset();
+        loadAssignments();
+      };
+
+      req.onerror = () => showAlert("Failed to post assignment", "danger");
+    });
+
+    function formatDate(dateString) {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      return new Date(dateString).toLocaleDateString('en-US', options);
+    }
+
+    function loadAssignments() {
+      const tx = db.transaction(STORE_NAME, "readonly");
+      const store = tx.objectStore(STORE_NAME);
+      const list = document.getElementById("assignmentList");
+      list.innerHTML = "";
+
+      store.openCursor(null, "prev").onsuccess = (e) => {
+        const cursor = e.target.result;
+        if (cursor) {
+          const a = cursor.value;
+          const div = document.createElement("div");
+          div.className = "assignment-item";
+          div.innerHTML = `
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <strong>${a.title}</strong> 
+                <span class="text-muted">${a.subject}</span><br>
+                <small class="text-muted">Posted: ${new Date(a.posted).toLocaleDateString()}</small><br>
+                <small><i class="far fa-calendar-alt me-1"></i> Deadline: ${a.deadline}</small>
+              </div>
+              <button class="btn btn-sm btn-danger" onclick="deleteAssignment(${a.id})">
+                <i class="fas fa-trash-alt"></i> Delete
+              </button>
+            </div>
+            <div class="mt-3">
+              <p class="mb-0">${a.description}</p>
+            </div>
+          `;
+          list.appendChild(div);
+          cursor.continue();
+        } else if (list.children.length === 0) {
+          list.innerHTML = `
+            <div class="empty-state">
+              <i class="far fa-folder-open"></i>
+              <p>No assignments posted yet</p>
+            </div>
+          `;
+        }
+      };
+    }
+
+    function deleteAssignment(id) {
+      if (!confirm("Are you sure you want to delete this assignment?")) return;
+
+      const tx = db.transaction(STORE_NAME, "readwrite");
+      const store = tx.objectStore(STORE_NAME);
+      store.delete(id).onsuccess = () => {
+        showAlert("Assignment deleted", "success");
+        loadAssignments();
+      };
+    }
+
+    function goBack() {
+      window.location.href = "admin_dashboard.html";
+    }
+
+    function showAlert(message, type) {
+      const alert = document.createElement("div");
+      alert.className = `alert alert-${type} mt-3`;
+      alert.innerHTML = message;
+      
+      const container = document.querySelector(".container");
+      container.insertBefore(alert, container.firstChild);
+      
+      setTimeout(() => {
+        alert.remove();
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

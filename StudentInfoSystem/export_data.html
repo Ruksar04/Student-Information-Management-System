@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Export Data as PDF Table</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- jsPDF & autoTable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --primary-color: #4a6bff;
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+      --text-light: rgba(255,255,255,0.9);
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--primary-gradient);
+      min-height: 100vh;
+      padding: 40px 20px;
+      margin: 0;
+      color: var(--text-light);
+    }
+    
+    .container {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--glass-border);
+      max-width: 800px;
+    }
+    
+    h2 {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 30px;
+      position: relative;
+      padding-bottom: 15px;
+    }
+    
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.8), rgba(255,255,255,0));
+      border-radius: 3px;
+    }
+    
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    
+    .btn {
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-weight: 500;
+      transition: transform 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 220px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.1);
+      color: white !important; /* Force white text for all buttons */
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px);
+    }
+    
+    .btn-outline-primary {
+      border-color: var(--primary-color);
+      background-color: var(--primary-color);
+    }
+    
+    .btn-outline-success {
+      border-color: var(--success-color);
+      background-color: var(--success-color);
+    }
+    
+    .btn-outline-warning {
+      border-color: var(--warning-color);
+      background-color: var(--warning-color);
+    }
+    
+    .btn-outline-danger {
+      border-color: var(--danger-color);
+      background-color: var(--danger-color);
+    }
+    
+    .btn-secondary {
+      background-color: rgba(255,255,255,0.15);
+    }
+    
+    .text-muted {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.7) !important;
+    }
+    
+    .mt-4 {
+      margin-top: 1.5rem !important;
+    }
+    
+    .text-center {
+      text-align: center !important;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2><i class="fas fa-file-export me-2"></i>Export Data as PDF</h2>
+
+    <div class="btn-group">
+      <button class="btn btn-outline-primary" onclick="exportToPDF('students')">
+        <i class="fas fa-users me-1"></i> Export Students
+      </button>
+      <button class="btn btn-outline-success" onclick="exportToPDF('documents')">
+        <i class="fas fa-file-upload me-1"></i> Export Documents
+      </button>
+      <button class="btn btn-outline-warning" onclick="exportToPDF('notifications')">
+        <i class="fas fa-bullhorn me-1"></i> Export Notifications
+      </button>
+      <button class="btn btn-outline-danger" onclick="exportToPDF('assignments')">
+        <i class="fas fa-tasks me-1"></i> Export Assignments
+      </button>
+    </div>
+
+    <div class="text-center mt-4">
+      <button class="btn btn-secondary" onclick="goBack()">
+        <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+      </button>
+    </div>
+
+    <div class="text-muted">
+      <i class="fas fa-info-circle me-1"></i> Each export will be saved as a downloadable PDF file with a full table layout
+    </div>
+  </div>
+
+  <script>
+    let db;
+    const request = indexedDB.open("StudentDB", 11);
+
+    request.onerror = () => {
+      const alert = document.createElement("div");
+      alert.className = "alert alert-danger mb-4";
+      alert.innerHTML = `
+        <i class="fas fa-exclamation-circle me-2"></i>Failed to open database
+      `;
+      document.querySelector(".container").prepend(alert);
+    };
+
+    request.onsuccess = (e) => {
+      db = e.target.result;
+    };
+
+    function exportToPDF(storeName) {
+      if (!db.objectStoreNames.contains(storeName)) {
+        showAlert(`Store "${storeName}" not found in database`, "warning");
+        return;
+      }
+
+      showAlert(`Preparing ${storeName} export...`, "info");
+
+      const tx = db.transaction(storeName, "readonly");
+      const store = tx.objectStore(storeName);
+      const data = [];
+
+      store.openCursor().onsuccess = (e) => {
+        const cursor = e.target.result;
+        if (cursor) {
+          data.push(cursor.value);
+          cursor.continue();
+        } else {
+          generatePDF(storeName, data);
+        }
+      };
+    }
+
+    function generatePDF(title, data) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      // Custom styling for the PDF
+      doc.setFontSize(18);
+      doc.setTextColor(40, 53, 147);
+      doc.text(`${title.toUpperCase()} REPORT`, 105, 15, { align: 'center' });
+      
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 22, { align: 'center' });
+
+      if (data.length === 0) {
+        doc.setFontSize(12);
+        doc.setTextColor(0);
+        doc.text("No records found.", 14, 30);
+      } else {
+        // Auto-detect headers from keys
+        const headers = Object.keys(data[0]).map(key => 
+          key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')
+        );
+        
+        const rows = data.map(obj => 
+          Object.values(obj).map(value => 
+            value instanceof Date ? value.toLocaleString() : String(value ?? "")
+          )
+        );
+
+        doc.autoTable({
+          head: [headers],
+          body: rows,
+          startY: 30,
+          theme: 'grid',
+          headStyles: { 
+            fillColor: [74, 107, 255],
+            textColor: 255,
+            fontStyle: 'bold'
+          },
+          alternateRowStyles: { fillColor: [240, 240, 240] },
+          styles: { 
+            fontSize: 9,
+            cellPadding: 3,
+            overflow: 'linebreak'
+          },
+          margin: { top: 30 },
+          columnStyles: {
+            0: { cellWidth: 'auto' }
+          }
+        });
+      }
+
+      doc.save(`${title}_report_${new Date().toISOString().slice(0,10)}.pdf`);
+      showAlert(`${title} exported successfully!`, "success");
+    }
+
+    function showAlert(message, type) {
+      const alert = document.createElement("div");
+      alert.className = `alert alert-${type} mb-4`;
+      alert.innerHTML = `
+        <i class="fas fa-${getIcon(type)} me-2"></i>${message}
+      `;
+      
+      const container = document.querySelector(".container");
+      const existingAlert = container.querySelector(".alert");
+      if (existingAlert) existingAlert.remove();
+      
+      container.insertBefore(alert, container.firstChild);
+      
+      setTimeout(() => {
+        alert.remove();
+      }, 3000);
+    }
+
+    function getIcon(type) {
+      const icons = {
+        success: 'check-circle',
+        warning: 'exclamation-triangle',
+        danger: 'times-circle',
+        info: 'info-circle'
+      };
+      return icons[type] || 'info-circle';
+    }
+
+    function goBack() {
+      window.location.href = "admin_dashboard.html";
+    }
+  </script>
+
+</body>
+</html>
