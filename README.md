@@ -1,4 +1,4 @@
-# HighAvail-StudentMS 🎓☁️
+# HighAvail-StudentMS 
 ### Highly Available Student Management System deployed on AWS
 
 A web-based Student Management System built with HTML, CSS, JavaScript, Bootstrap, and IndexedDB — deployed on AWS with a highly available and scalable architecture using EC2, Application Load Balancer, Auto Scaling Group, and VPC across multiple Availability Zones.
