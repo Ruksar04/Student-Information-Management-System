@@ -132,7 +132,6 @@ IndexedDB (client-side storage)
 - VPC networking — subnets, internet gateways, routing tables
 - Difference between scaling up (vertical) vs scaling out (horizontal)
 
-## DNS - http://sims-alb-51296580.us-east-1.elb.amazonaws.com/
 ---
 
 ## 👩‍💻 Author
