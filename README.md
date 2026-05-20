@@ -132,7 +132,7 @@ IndexedDB (client-side storage)
 - VPC networking — subnets, internet gateways, routing tables
 - Difference between scaling up (vertical) vs scaling out (horizontal)
 
-##💡 Cost Optimization Note: AWS resources 
+> Cost Optimization Note: AWS resources 
 > terminated after successful testing to avoid 
 > unnecessary charges. This is intentional — 
 > cost awareness is a core DevOps practice.
